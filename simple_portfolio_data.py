@@ -65,7 +65,7 @@ meanl = []
 means = []
 stdl = []
 stds = []
-lamvals = np.linspace(0, 50, num = 50)
+lamvals = np.linspace(0, 50, num = 500)
 for val in lamvals:
     lam.value = val
     prob1.solve()
