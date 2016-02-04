@@ -41,7 +41,7 @@ for i in xrange(T - 1):
 obj1 = Minimize(p.T * (c + u))
 prob1 = Problem(obj1, constraints1)
 optimal1 = []
-qvalues1 = np.linspace(1, 50, num = 200)
+qvalues1 = np.linspace(1, 200, num = 400)
 for val in qvalues1:
     Q.value = val
     prob1.solve()
@@ -58,7 +58,7 @@ for i in xrange(T - 1):
 obj2 = Minimize(p.T * (c + u))
 prob2 = Problem(obj2, constraints2)
 optimal2 = []
-qvalues2 = np.linspace(1, 50, num = 200)
+qvalues2 = np.linspace(1, 200, num = 400)
 for val in qvalues2:
     Q.value = val
     prob2.solve()
