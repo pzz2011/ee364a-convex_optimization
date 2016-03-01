@@ -2,6 +2,7 @@
 # contains quantities: n, a, b, c, d, smin, smax, tau_min, tau_max
 import numpy as np
 from cvxpy import *
+import matplotlib.pyplot as plt
 
 n =   100
 a =     1
@@ -66,17 +67,27 @@ tau_max = np.transpose(np.matrix(
      142.7253, 141.5105, 143.7757, 145.9842, 146.1712, 148.2622, 149.2407, 151.6295, 155.0270,
      155.6694, 156.6739, 156.5266, 157.6903]))
 
-ds_max = d / smax
-ds_min = d / smin
+Ones = np.tril(np.ones([n, n]))
 t = Variable(n)
-obj = Minimize(a * square(d).T * inv_pos(t) + sum_entries(b * d + c * t))
-cons = [t >= ds_max, t <= ds_min]
-for i in range(n):
-    cons.append(sum_entries(t[0:i]) <= tau_max[i])
-    cons.append(sum_entries(t[0:i]) >= tau_min[i])
+obj = Minimize(sum_entries(mul_elemwise(a * square(d), inv_pos(t)) + b * d + c * t))
+cons = [d >= mul_elemwise(smin, t), d <= mul_elemwise(smax, t),
+Ones * t >= tau_min, Ones * t <= tau_max]
+
 prob = Problem(obj, cons)
 prob.solve()
 
 t_star = t.value
 consumption = prob.value
-print prob.status
+print consumption
+s_star = np.zeros(n)
+d_cum = np.zeros(n)
+d_cum[0] = d[0]
+s_star[0] = d[0]/t_star[0]
+for i in xrange(1, n):
+    s_star[i] = d[i]/t_star[i]
+    d_cum[i] = d_cum[i - 1] + d[i]
+
+plt.step(d_cum, s_star, where = 'pre', color = 'red')
+plt.xlabel('Segment')
+plt.ylabel('Speed')
+plt.show()
